@@ -28,3 +28,7 @@ sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 
 5. Install /etc/initramfs-tools/…
 6. `sudo update-initramfs -u`
+
+## License
+
+This collection of scripts is licensed under the [GNU GPLv3](http://choosealicense.com/licenses/gpl-3.0/).
