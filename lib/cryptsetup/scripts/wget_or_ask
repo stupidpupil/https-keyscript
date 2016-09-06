@@ -1,0 +1,15 @@
+#!/bin/sh
+openssl_passphrase=somepassphrase
+url=https://example.org/a_random_filename
+
+encrypted_keyfile=$(/usr/bin/wget -O - $url)
+
+if [ $? -eq 0 ]; then
+  decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -d -salt -k "$openssl_passphrase")
+  if [ $? -eq 0 ]; then
+    echo "$decrypted_keyfile"
+    exit
+  fi
+fi
+
+/lib/cryptsetup/askpass "Getting passphrase remotely failed"
