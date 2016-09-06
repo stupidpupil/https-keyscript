@@ -29,6 +29,10 @@ sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 5. Install /etc/initramfs-tools/…
 6. `sudo update-initramfs -u`
 
+## Alternatives
+
+[Mandos](https://wiki.recompile.se/wiki/Mandos) provides a system with better client authentication and automated detection of a client going offline for an unexpected period of time.
+
 ## License
 
 This collection of scripts is licensed under the [GNU GPLv3](http://choosealicense.com/licenses/gpl-3.0/).
