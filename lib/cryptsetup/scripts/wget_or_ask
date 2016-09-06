@@ -2,6 +2,38 @@
 openssl_passphrase=somepassphrase
 url=https://example.org/a_random_filename
 
+#
+# Plymouth helper functions
+#
+
+use_plymouth=0
+if [ -x /bin/plymouth ] && plymouth --ping; then
+    use_plymouth=1
+fi
+
+message ()
+{
+  echo $1 | while read LINE; do
+    if [ $use_plymouth -eq 1 ]; then
+      plymouth message --text="$LINE"
+    else
+      echo "$LINE" >&2
+    fi
+  done
+}
+
+askpass ()
+{
+  if [ $use_plymouth -eq 1 ]; then
+    passphrase="$(plymouth ask-for-password --prompt "$1")"
+    echo -n "$passphrase"
+  else
+    /lib/cryptsetup/askpass "$1"
+  fi
+}
+
+message "Fetching remote keyfile for $CRYPTTAB_NAME..."
+
 # Specify the full path, otherwise you get busybox's wget
 encrypted_keyfile=$(/usr/bin/wget --secure-protocol=PFS -q -O - $url)
 
@@ -13,4 +45,4 @@ if [ $? -eq 0 ]; then
   fi
 fi
 
-/lib/cryptsetup/askpass "Getting passphrase remotely failed for $CRYPTTAB_NAME. Enter passphrase: "
+askpass "Getting passphrase remotely failed for $CRYPTTAB_NAME. Enter passphrase: "
