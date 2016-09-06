@@ -27,7 +27,8 @@ sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 ```
 
 5. Install /etc/initramfs-tools/…
-6. `sudo update-initramfs -u`
+6. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=wget_or_ask`.
+7. `sudo update-initramfs -u`
 
 ## Alternatives
 
