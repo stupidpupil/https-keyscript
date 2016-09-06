@@ -1,6 +1,6 @@
 # HTTPS Keyscript
 
-A keyscript and initramfs-tools helpers to allow a machine with an encrypted boot drive to passwordlessly boot by fetching a key over HTTPS.
+A keyscript and initramfs-tools helpers to allow a machine with a LUKS-encrypted boot drive to passwordlessly boot by fetching a remote key over HTTPS.
 
 It is intended to protect against information disclosure in the event of accidental loss or untargeted theft - the key can be removed from the webserver as soon as the loss is noticed. It's not at all secure if you're trying to protect yourself against someone deliberately trying to obtain your information.
 
