@@ -7,6 +7,8 @@ esac
 
 copy_exec /usr/bin/wget
 
+# A mindlessly compiled list produced by running `strace wget …`
+# to ensure DNS and SSL support
 copy_exec /usr/lib/i386-linux-gnu/libnettle.so.4
 copy_exec /usr/lib/i386-linux-gnu/libgnutls-deb0.so.28
 copy_exec /lib/i386-linux-gnu/libz.so.1
@@ -32,4 +34,5 @@ copy_exec /lib/i386-linux-gnu/libnss_files.so.2
 copy_exec /lib/i386-linux-gnu/libnss_dns.so.2
 copy_exec /lib/i386-linux-gnu/libresolv.so.2
 
+# To allow the HTTPS cert to be verified
 copy_exec /etc/ssl/certs/ca-certificates.crt

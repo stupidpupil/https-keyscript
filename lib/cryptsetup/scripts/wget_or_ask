@@ -2,6 +2,7 @@
 openssl_passphrase=somepassphrase
 url=https://example.org/a_random_filename
 
+# Specify the full path, otherwise you get busybox's wget
 encrypted_keyfile=$(/usr/bin/wget -O - $url)
 
 if [ $? -eq 0 ]; then
