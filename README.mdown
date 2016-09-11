@@ -36,6 +36,8 @@ sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 
 [netkeyscript](https://github.com/basak/netkeyscript) uses link-local IPv6 UDP packets with an unencrypted passphrase.
 
+There are a number of variations on using *dropbear* or similar to allow remote, but not unattended, restarts with an encrypted boot.
+
 ## License
 
 This collection of scripts is licensed under the [GNU GPLv3](http://choosealicense.com/licenses/gpl-3.0/).
