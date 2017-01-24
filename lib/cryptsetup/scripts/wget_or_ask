@@ -26,7 +26,7 @@ askpass ()
 {
   if [ $use_plymouth -eq 1 ]; then
     passphrase="$(plymouth ask-for-password --prompt "$1")"
-    echo -n "$passphrase"
+    printf '%s' "$passphrase"
   else
     /lib/cryptsetup/askpass "$1"
   fi
@@ -40,7 +40,7 @@ encrypted_keyfile=$(/usr/bin/wget --secure-protocol=PFS -q -O - $url)
 if [ $? -eq 0 ]; then
   decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -d -salt -k "$openssl_passphrase")
   if [ $? -eq 0 ]; then
-    echo "$decrypted_keyfile"
+    printf '%s\n' "$decrypted_keyfile"
     exit
   fi
 fi
