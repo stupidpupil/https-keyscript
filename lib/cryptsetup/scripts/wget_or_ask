@@ -13,7 +13,7 @@ fi
 
 message ()
 {
-  echo $1 | while read LINE; do
+  echo "$1" | while read LINE; do
     if [ $use_plymouth -eq 1 ]; then
       plymouth message --text="$LINE"
     else
