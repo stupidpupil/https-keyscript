@@ -38,7 +38,7 @@ message "Fetching remote keyfile for $CRYPTTAB_NAME..."
 encrypted_keyfile=$(/usr/bin/wget --secure-protocol=PFS -q -O - $url)
 
 if [ $? -eq 0 ]; then
-  decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -d -salt -k "$openssl_passphrase")
+  decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -md sha256 -d -salt -k "$openssl_passphrase")
   if [ $? -eq 0 ]; then
     printf '%s\n' "$decrypted_keyfile"
     exit
