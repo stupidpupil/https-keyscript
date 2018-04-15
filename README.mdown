@@ -17,7 +17,6 @@ It is intended to protect against information disclosure in the event of acciden
 ```
 dd if=/dev/random bs=1c count=256 | base64 > unencrypted_keyfile
 cat unencrypted_keyfile | openssl enc -base64 -aes-256-cbc -md sha256 -e -salt -out encrypted_keyfile -k somepassphrase
-rm unencrypted_keyfile
 ```
 
 2. Make `encrypted_keyfile` available somewhere on a webserver.
@@ -25,9 +24,8 @@ rm unencrypted_keyfile
 4. Add keyfile to LUKS slots.
 
 ```
-busybox sh /lib/cryptsetup/scripts/wget_or_ask > keyfile
-sudo cryptsetup luksAddKey /dev/someDevice keyfile
-rm keyfile
+sudo cryptsetup luksAddKey /dev/someDevice unencrypted_keyfile
+rm unencrypted_keyfile
 sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 ```
 
