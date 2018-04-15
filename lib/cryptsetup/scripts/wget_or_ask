@@ -2,6 +2,7 @@
 
 # Configuration
 use_keyring=1
+use_https=1
 
 # Interpret the 'keyfile' argument
 if [ -z "$CRYPTTAB_KEY" ]; then
@@ -13,8 +14,17 @@ sedRegex="^\(.\+\):\(https:\/\/.\+\)$"
 openssl_passphrase="$(echo "$CRYPTTAB_KEY" | sed -n -e "s/$sedRegex/\1/p")"
 url="$(echo "$CRYPTTAB_KEY" | sed -n -e "s/$sedRegex/\2/p")"
 
-keyctl_id=$CRYPTTAB_KEY
+keyctl_id="crypttab-$CRYPTTAB_KEY"
 
+
+# If this isn't the first attempt,
+# or there were problems with getting either a passphrase or a url
+# switch off any attempt to fetch the key remotely or by the keyring
+
+if [ "$CRYPTTAB_TRIED" -gt 0 ] || [ -z "$url" ] || [ -z "$openssl_passphrase" ]; then
+  use_keyring=0
+  use_https=0
+fi
 
 #
 # Plymouth helper functions
@@ -46,7 +56,7 @@ askpass ()
 }
 
 #
-# Kernel keyring helper functions
+# Kernel keyring functions
 #
 keyctl_try_fetch ()
 {
@@ -56,7 +66,7 @@ keyctl_try_fetch ()
   fi
 
 
-  kSerial="$(keyctl search @u user "$1" 2>&1)"
+  kSerial="$(keyctl search @u user "$keyctl_id" 2>&1)"
   if [ $? -eq 0 ]; then
     message "Retrieved key for $CRYPTTAB_NAME from keyring"
     keyctl pipe "$kSerial"
@@ -70,7 +80,7 @@ keyctl_store ()
     return 0
   fi
 
-  kSerial="$(printf '%s\n' "$decrypted_keyfile" | keyctl padd user "$1" @u 2>&1)"
+  kSerial="$(printf '%s\n' "$decrypted_keyfile" | keyctl padd user "$keyctl_id" @u 2>&1)"
   if [ $? -eq 0 ]; then
     keyctl timeout "$kSerial" 60
 
@@ -80,20 +90,33 @@ keyctl_store ()
   fi
 }
 
-keyctl_try_fetch "$keyctl_id"
+#
+# Finally the function to fetch the keyfile by HTTPS 
+#
 
-message "Fetching remote keyfile for $CRYPTTAB_NAME..."
-
-# Specify the full path, otherwise you get busybox's wget
-encrypted_keyfile=$(/usr/bin/wget --secure-protocol=PFS -q -O - "$url")
-
-if [ $? -eq 0 ]; then
-  decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -md sha256 -d -salt -k "$openssl_passphrase")
-  if [ $? -eq 0 ]; then
-    keyctl_store "$keyctl_id" "$decrypted_keyfile" 
-    printf '%s\n' "$decrypted_keyfile"
-    exit
+https_try_fetch ()
+{
+  if [ $use_https -eq 0 ]; then
+    return 0
   fi
-fi
+
+  message "Fetching remote keyfile for $CRYPTTAB_NAME..."
+
+  # Specify the full path, otherwise you get busybox's wget
+  encrypted_keyfile=$(/usr/bin/wget --secure-protocol=PFS -q -O - "$url")
+
+  if [ $? -eq 0 ]; then
+    decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -md sha256 -d -salt -k "$openssl_passphrase")
+    if [ $? -eq 0 ]; then
+      keyctl_store
+      printf '%s\n' "$decrypted_keyfile"
+      exit
+    fi
+  fi
+}
+
+
+keyctl_try_fetch
+https_try_fetch
 
 askpass "Getting passphrase remotely failed for $CRYPTTAB_NAME. Enter passphrase: "
