@@ -14,7 +14,7 @@ sedRegex="^\(.\+\):\(https:\/\/.\+\)$"
 openssl_passphrase="$(echo "$CRYPTTAB_KEY" | sed -n -e "s/$sedRegex/\1/p")"
 url="$(echo "$CRYPTTAB_KEY" | sed -n -e "s/$sedRegex/\2/p")"
 
-keyctl_id="crypttab-$CRYPTTAB_KEY"
+keyctl_id="crypttab:$CRYPTTAB_KEY"
 
 
 # If this isn't the first attempt,
