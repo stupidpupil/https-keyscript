@@ -7,7 +7,7 @@ url="https://raw.githubusercontent.com/stupidpupil/https-keyscript/master/tests/
 
 export CRYPTTAB_KEY="$passphrase:$url"
 export CRYPTTAB_NAME="TestDevice"
-
+export CRYPTTAB_TRIED=0
 
 runTest()
 {
