@@ -4,6 +4,10 @@
 use_keyring=1
 
 # Interpret the 'keyfile' argument
+if [ -z "$CRYPTTAB_KEY" ]; then
+  CRYPTTAB_KEY=$1
+fi
+
 sedRegex="^\(.\+\):\(https:\/\/.\+\)$"
 
 openssl_passphrase="$(echo "$CRYPTTAB_KEY" | sed -n -e "s/$sedRegex/\1/p")"
