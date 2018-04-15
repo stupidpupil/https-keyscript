@@ -8,6 +8,7 @@ It is intended to protect against information disclosure in the event of acciden
 
 * Falls back to asking for a passphrase if the remote key can't be retrieved
 * Compatible with the [Plymouth splash screen](https://www.freedesktop.org/wiki/Software/Plymouth/)
+* Caches keys across devices using the kernel keyring
 
 ## Example
 
@@ -20,7 +21,7 @@ rm unencrypted_keyfile
 ```
 
 2. Make `encrypted_keyfile` available somewhere on a webserver.
-3. Install and edit `/lib/cryptsetup/scripts/wget_or_ask`.
+3. Install `/lib/cryptsetup/scripts/wget_or_ask`.
 4. Add keyfile to LUKS slots.
 
 ```
@@ -31,7 +32,7 @@ sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 ```
 
 5. Install `/etc/initramfs-tools/…`
-6. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=wget_or_ask`.
+6. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=wget_or_ask` and with a 'key file' field like `somepassphrase:https://example.org/encrypted_keyfile`. 
 7. `sudo update-initramfs -u`
 
 ## Alternatives

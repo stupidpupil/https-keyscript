@@ -1,11 +1,20 @@
 #!/bin/sh
-openssl_passphrase=somepassphrase
-url=https://example.org/a_random_filename
+
+# Configuration
+use_keyring=1
+
+# Interpret the 'keyfile' argument
+sedRegex="^\(.\+\):\(https:\/\/.\+\)$"
+
+openssl_passphrase="$(echo "$CRYPTTAB_KEY" | sed -n -e "s/$sedRegex/\1/p")"
+url="$(echo "$CRYPTTAB_KEY" | sed -n -e "s/$sedRegex/\2/p")"
+
+keyctl_id=$CRYPTTAB_KEY
+
 
 #
 # Plymouth helper functions
 #
-
 use_plymouth=0
 if [ -x /bin/plymouth ] && plymouth --ping; then
     use_plymouth=1
@@ -32,14 +41,52 @@ askpass ()
   fi
 }
 
+#
+# Kernel keyring helper functions
+#
+keyctl_try_fetch ()
+{
+
+  if [ $use_keyring -eq 0 ]; then
+    return 0
+  fi
+
+
+  kSerial="$(keyctl search @u user "$1" 2>&1)"
+  if [ $? -eq 0 ]; then
+    message "Retrieved key for $CRYPTTAB_NAME from keyring"
+    keyctl pipe "$kSerial"
+    exit
+  fi
+}
+
+keyctl_store ()
+{
+  if [ $use_keyring -eq 0 ]; then
+    return 0
+  fi
+
+  kSerial="$(printf '%s\n' "$decrypted_keyfile" | keyctl padd user "$1" @u 2>&1)"
+  if [ $? -eq 0 ]; then
+    keyctl timeout "$kSerial" 60
+
+    if [ $? -ne 0 ]; then
+      keyctl unlink "$kSerial"
+    fi
+  fi
+}
+
+keyctl_try_fetch "$keyctl_id"
+
 message "Fetching remote keyfile for $CRYPTTAB_NAME..."
 
 # Specify the full path, otherwise you get busybox's wget
-encrypted_keyfile=$(/usr/bin/wget --secure-protocol=PFS -q -O - $url)
+encrypted_keyfile=$(/usr/bin/wget --secure-protocol=PFS -q -O - "$url")
 
 if [ $? -eq 0 ]; then
   decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -md sha256 -d -salt -k "$openssl_passphrase")
   if [ $? -eq 0 ]; then
+    keyctl_store "$keyctl_id" "$decrypted_keyfile" 
     printf '%s\n' "$decrypted_keyfile"
     exit
   fi
