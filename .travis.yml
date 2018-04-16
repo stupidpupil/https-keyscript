@@ -6,4 +6,6 @@ before_install:
   - 'sudo apt-get install -qq keyutils shellcheck initramfs-tools'
   - 'sudo bash install.sh'
 script:
+  - 'bash tests/keyscript.sh'
   - 'sudo bash tests/initramfs.sh'
+  - 'bash tests/shellcheck.sh'
