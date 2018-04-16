@@ -21,8 +21,16 @@ keyctl_id="crypttab:$CRYPTTAB_KEY"
 # or there were problems with getting either a passphrase or a url
 # switch off any attempt to fetch the key remotely or by the keyring
 
-if [ "$CRYPTTAB_TRIED" -gt 0 ] || [ -z "$url" ] || [ -z "$openssl_passphrase" ]; then
+if [ "$CRYPTTAB_TRIED" -gt 0 ]; then
   use_keyring=0
+  use_https=0
+fi
+
+if [ ! -x /bin/keyctl ]; then
+  use_keyring=0
+fi
+
+if  [ -z "$url" ] || [ -z "$openssl_passphrase" ]; then
   use_https=0
 fi
 
