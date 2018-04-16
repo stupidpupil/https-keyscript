@@ -35,6 +35,10 @@ sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 6. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=wget_or_ask` and with a 'key file' field like `somepassphrase:https://example.org/encrypted_keyfile`. 
 7. `sudo update-initramfs -u`
 
+## Caching
+
+The keyscript uses the [kernel keyring](http://man7.org/linux/man-pages/man7/keyrings.7.html) to cache decrypted keys for 60 seconds, avoiding multiple HTTPS requests where multiple devices have the same key file specified in `/etc/crypttab`. This feature depends on the *keyutils* package.
+
 ## Alternatives
 
 [Mandos](https://wiki.recompile.se/wiki/Mandos) provides a system with better client authentication and automated detection of a client going offline for an unexpected period of time.
