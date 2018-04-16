@@ -78,7 +78,7 @@ keyctl_try_fetch ()
     return 0
   fi
 
-  kSerial="$(keyctl search @u user "$keyctl_id" 2>&1)"
+  kSerial="$(keyctl search @us user "$keyctl_id" 2>&1)"
   exitCode=$?
 
   if [ $exitCode -eq 0 ]; then
@@ -100,7 +100,7 @@ keyctl_store ()
     return 0
   fi
 
-  kSerial="$(printf '%s\n' "$decrypted_keyfile" | keyctl padd user "$keyctl_id" @u 2>&1)"
+  kSerial="$(printf '%s\n' "$decrypted_keyfile" | keyctl padd user "$keyctl_id" @us 2>&1)"
   exitCode=$?
 
   keyctl setperm "$kSerial" 0x3f3f0000 > /dev/null
