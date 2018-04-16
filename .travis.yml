@@ -1,6 +1,8 @@
+sudo: required
+dist: trusty
 language: bash
 before_install:
   - 'sudo apt-get update -qq'
   - 'sudo apt-get install -qq keyutils shellcheck initramfs-tools'
 script:
-  - bash tests/initramfs.sh
+  - sudo bash tests/initramfs.sh
