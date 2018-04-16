@@ -55,6 +55,11 @@ message ()
 
 askpass ()
 {
+  if [ ! -z "$TESTING" ]; then
+    message "askpass called in testing"
+    exit 42
+  fi
+
   if [ $use_plymouth -eq 1 ]; then
     passphrase="$(plymouth ask-for-password --prompt "$1")"
     printf '%s' "$passphrase"
