@@ -109,6 +109,7 @@ keyctl_store ()
   if [ $exitCode -ne 0 ]; then
     message "Error saving to keyring: $kSerial"
     message "$(keyctl describe "$kSerial")"
+    keyctl show @u
     keyctl unlink "$kSerial" > /dev/null
     return
   fi
