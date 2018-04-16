@@ -108,10 +108,10 @@ keyctl_store ()
   fi
 
   if [ $exitCode -eq 0 ]; then
-    keyctl timeout "$kSerial" 60
+    keyctl timeout "$kSerial" 60 > /dev/null
 
     if [ $? -ne 0 ]; then
-      keyctl unlink "$kSerial"
+      keyctl unlink "$kSerial" > /dev/null
     fi
 
     return
