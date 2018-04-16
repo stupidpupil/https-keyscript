@@ -22,6 +22,8 @@ runTest()
   csum="$(echo "$output" | sha256sum | cut -d " " -f1)"
 
   if [ "$csum" != "$correctCsum" ]; then
+    echo "Checksum failed for"
+    echo "$output"
     return 1
   fi
 
