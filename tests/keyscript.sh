@@ -49,8 +49,3 @@ runTest
 if [ $? -ne 42 ]; then
   exit 1
 fi
-
-shellcheck -s sh --exclude=SC2181,SC2162 lib/cryptsetup/scripts/wget_or_ask
-if [ $? -ne 0 ]; then
-  exit 1
-fi
