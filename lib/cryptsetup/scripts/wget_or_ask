@@ -103,6 +103,9 @@ keyctl_store ()
   kSerial="$(printf '%s\n' "$decrypted_keyfile" | keyctl padd user "$keyctl_id" @u 2>&1)"
   exitCode=$?
 
+  keyctl setperm "$kSerial" 0x3f3f0000 > /dev/null
+  exitCode=$((exitCode+$?))
+
   if [ $exitCode -ne 0 ]; then
     message "Error saving to keyring: $kSerial"
   fi
