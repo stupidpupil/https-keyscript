@@ -82,9 +82,15 @@ keyctl_try_fetch ()
   exitCode=$?
 
   if [ $exitCode -eq 0 ]; then
-    message "Retrieved key for $CRYPTTAB_NAME from keyring"
-    keyctl pipe "$kSerial"
-    exit
+    retrievedKey="$(keyctl pipe "$kSerial")"
+
+    if [ $? -eq 0 ]; then
+      message "Retrieved key for $CRYPTTAB_NAME from keyring"
+      printf '%s' "$retrievedKey"
+      exit
+    fi
+
+    return
   fi
 
   # Exit code of 1 indicates a failed search
@@ -108,8 +114,6 @@ keyctl_store ()
 
   if [ $exitCode -ne 0 ]; then
     message "Error saving to keyring: $kSerial"
-    message "$(keyctl describe "$kSerial")"
-    keyctl show @u
     keyctl unlink "$kSerial" > /dev/null
     return
   fi
