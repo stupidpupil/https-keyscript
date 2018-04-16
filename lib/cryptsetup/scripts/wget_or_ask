@@ -55,7 +55,7 @@ message ()
 
 askpass ()
 {
-  if [ ! -z "$TESTING" ]; then
+  if [ ! -z "$HTTPSKEYSCRIPT_TESTING" ]; then
     message "askpass called in testing"
     exit 42
   fi
