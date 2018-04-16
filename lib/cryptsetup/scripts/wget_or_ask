@@ -65,13 +65,20 @@ keyctl_try_fetch ()
     return 0
   fi
 
-
   kSerial="$(keyctl search @u user "$keyctl_id" 2>&1)"
-  if [ $? -eq 0 ]; then
+  exitCode=$?
+
+  if [ $exitCode -eq 0 ]; then
     message "Retrieved key for $CRYPTTAB_NAME from keyring"
     keyctl pipe "$kSerial"
     exit
   fi
+
+  # Exit code of 1 indicates a failed search
+  if [ $exitCode -ne 1 ]; then
+    message "Error retrieving from keyring: $kSerial"
+  fi 
+
 }
 
 keyctl_store ()
@@ -81,13 +88,23 @@ keyctl_store ()
   fi
 
   kSerial="$(printf '%s\n' "$decrypted_keyfile" | keyctl padd user "$keyctl_id" @u 2>&1)"
-  if [ $? -eq 0 ]; then
+  exitCode=$?
+
+  if [ $exitCode -ne 0 ]; then
+    message "Error saving to keyring: $kSerial"
+  fi
+
+  if [ $exitCode -eq 0 ]; then
     keyctl timeout "$kSerial" 60
 
     if [ $? -ne 0 ]; then
       keyctl unlink "$kSerial"
     fi
+
+    return
   fi
+
+
 }
 
 #
