@@ -51,3 +51,9 @@ runTest
 if [ $? -ne 42 ]; then
   exit 1
 fi
+
+export CRYPTTAB_KEY="not an acceptable key file"
+runTest
+if [ $? -ne 42 ]; then
+  exit 1
+fi
