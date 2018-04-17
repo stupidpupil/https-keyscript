@@ -1,7 +1,7 @@
 Package: https-keyscript
 Version: 0.0.1
 Maintainer: Adam Watkins <adam.gc.watkins@gmail.com>
-Description: A keyscript and initramfs-tools helpers to allow a machine with a LUKS-encrypted boot drive to passwordlessly boot by fetching a remote key over HTTPS.
+Description: keyscript to fetch a remote key over HTTPS.
 Homepage: https://github.com/stupidpupil/https-keyscript
 Architecture: all
 Priority: optional
