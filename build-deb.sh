@@ -8,4 +8,4 @@ chmod og=rx src/etc/initramfs-tools/hooks/*.sh
 chmod og=rx src/etc/initramfs-tools/scripts/init-premount/*.sh
 chmod og=rx src/lib/cryptsetup/scripts/wget_or_ask
 
-dpkg-deb -b src https-keyscript.deb
+dpkg-deb -b src dist

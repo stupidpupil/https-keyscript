@@ -5,7 +5,7 @@ before_install:
   - 'sudo apt-get update -qq'
   - 'sudo apt-get install -qq keyutils shellcheck initramfs-tools fakeroot'
   - 'fakeroot /bin/sh build-deb.sh'
-  - 'sudo dpkg -i https-keyscript.deb'
+  - 'sudo dpkg -i dist/*.deb'
 script:
   - 'bash tests/keyscript.sh'
   - 'sudo bash tests/initramfs.sh'
