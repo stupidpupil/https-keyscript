@@ -86,7 +86,7 @@ keyctl_try_fetch ()
 
     if [ $? -eq 0 ]; then
       message "Retrieved key for $CRYPTTAB_NAME from keyring"
-      printf '%s' "$retrievedKey"
+      printf '%s\n' "$retrievedKey"
       exit
     fi
 
