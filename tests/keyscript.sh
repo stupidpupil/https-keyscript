@@ -12,7 +12,7 @@ export HTTPSKEYSCRIPT_TESTING=1
 
 runTest()
 {
-  output="$(busybox sh lib/cryptsetup/scripts/wget_or_ask)"
+  output="$(busybox sh lib/cryptsetup/scripts/wget_or_ask 2>/dev/null)"
   exitCode=$?
 
   if [ "$exitCode" -ne 0 ];then
@@ -30,30 +30,44 @@ runTest()
   return 0
 }
 
+cExitCode=0
+
+
+echo " - First-run test"
 runTest
 if [ $? -ne 0 ]; then
-  exit 1
+  cExitCode=$((cExitCode+1))
 fi
 
+echo ""
+echo " - Second-run test"
 runTest
 if [ $? -ne 0 ]; then
-  exit 1
+  cExitCode=$((cExitCode+1))
 fi
 
+echo ""
+echo " - Faulty passphrase"
 export CRYPTTAB_KEY="$passphrase/a:$url"
 runTest
 if [ $? -ne 42 ]; then
-  exit 1
+  cExitCode=$((cExitCode+1))
 fi
 
+echo ""
+echo " - Faulty URL"
 export CRYPTTAB_KEY="$passphrase:https://not.a.real.address.example"
 runTest
 if [ $? -ne 42 ]; then
-  exit 1
+  cExitCode=$((cExitCode+1))
 fi
 
+echo ""
+echo " - Faulty key file variable"
 export CRYPTTAB_KEY="not an acceptable key file"
 runTest
 if [ $? -ne 42 ]; then
-  exit 1
+  cExitCode=$((cExitCode+1))
 fi
+
+exit "$cExitCode"

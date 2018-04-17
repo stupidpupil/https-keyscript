@@ -2,7 +2,13 @@
 
 INITRAMFS_ROOT="tmp/initramfs"
 
+if [ -d "$INITRAMFS_ROOT" ]; then
+  echo "$INITRAMFS_ROOT already exists!"
+  exit 1
+fi
+
 workingDir="$(mkinitramfs -k -o "$INITRAMFS_ROOT-$(uname -r)" | cut -d " " -f 4 | cut -d "," -f 1)"
+echo "initramfs built"
 
 cp -r "$workingDir" "$INITRAMFS_ROOT"
 rm -r /var/tmp/mkinitramfs*
@@ -28,7 +34,12 @@ fi
 chroot "$INITRAMFS_ROOT" busybox sh "/tests/keyscript.sh"
 exitCode=$?
 
-umount "$INITRAMFS_ROOT/dev/"
-rm -r "$INITRAMFS_ROOT"
+sleep 1
+
+umount "$INITRAMFS_ROOT/dev"
+
+if [ $? -eq 0 ]; then 
+  rm -r "$INITRAMFS_ROOT"
+fi
 
 exit "$exitCode"
