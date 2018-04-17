@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if ! (dpkg -s https-keyscript | grep "Status:.*installed" > /dev/null); then
+  echo "https-keyscript is not installed"
+  exit 1
+fi
+
 INITRAMFS_ROOT="tmp/initramfs"
 
 if [ -d "$INITRAMFS_ROOT" ]; then
