@@ -70,4 +70,13 @@ if [ $? -ne 42 ]; then
   cExitCode=$((cExitCode+1))
 fi
 
+echo ""
+echo " - CRYPTTAB_TRIED=1"
+export CRYPTTAB_KEY="$passphrase:$url"
+export CRYPTTAB_TRIED=1
+runTest
+if [ $? -ne 42 ]; then
+  cExitCode=$((cExitCode+1))
+fi
+
 exit "$cExitCode"
