@@ -10,84 +10,105 @@ export CRYPTTAB_NAME="TestDevice"
 export CRYPTTAB_TRIED=0
 export HTTPSKEYSCRIPT_TESTING=1
 
+# Run the test against the src version of the keyscript if its available
+# or else against the installed version (which is useful for the initramfs test)
 keyscriptPath="src/lib/cryptsetup/scripts/wget_or_ask"
 if [ ! -f "$keyscriptPath" ]; then
   keyscriptPath="/lib/cryptsetup/scripts/wget_or_ask"
 fi
 
-runTest()
+cExitCode=0
+output=""
+
+runTest ()
 {
-  output="$(busybox sh "$keyscriptPath" 2>/dev/null)"
+  stdout="$(busybox sh "$keyscriptPath" 2>/dev/null)"
   exitCode=$?
+
+  csum="$(echo "$stdout" | sha256sum | cut -d " " -f1)"
 
   if [ "$exitCode" -ne 0 ];then
     return "$exitCode"
   fi
+}
 
-  csum="$(echo "$output" | sha256sum | cut -d " " -f1)"
+# Assertions
+assertChecksumIsCorrect ()
+{
+  printf "   checksum should be correct "
 
   if [ "$csum" != "$correctCsum" ]; then
-    echo "Checksum failed for"
+    echo "❌"
     echo "$output"
+
+    cExitCode=$((cExitCode+1))
     return 1
   fi
 
-  return 0
+  echo "✓"
 }
 
-cExitCode=0
+assertExitedWithoutError ()
+{
+  printf "   should exit without error "
+  if [ "$exitCode" -ne 0 ];then
+    echo "❌"
+    cExitCode=$((cExitCode+1))
+    return 1
+  fi
+
+  echo "✓"
+}
+
+assertExitedWithAskpass ()
+{
+  printf "   should fallback to askpass "
+  if [ "$exitCode" -ne 42 ] || [ ! -z "$output" ];then
+    echo "❌"
+    cExitCode=$((cExitCode+1))
+    return 1
+  fi
+
+  echo "✓"
+}
 
 
-echo " - First-run test"
+# Testcases
+
+echo "When run with a valid passphrase and URL"
 runTest
-if [ $? -ne 0 ]; then
-  echo "   Wrong exit code"
-  cExitCode=$((cExitCode+1))
-fi
+assertExitedWithoutError
+assertChecksumIsCorrect
 
 echo ""
-echo " - Second-run test"
+echo "When run *again* a valid passphrase and URL"
 runTest
-if [ $? -ne 0 ]; then
-  echo "   Wrong exit code"
-  cExitCode=$((cExitCode+1))
-fi
+assertExitedWithoutError
+assertChecksumIsCorrect
 
 echo ""
-echo " - Faulty passphrase"
+echo "When run with a faulty passphrase"
 export CRYPTTAB_KEY="$passphrase/a:$url"
 runTest
-if [ $? -ne 42 ]; then
-  echo "   Wrong exit code"
-  cExitCode=$((cExitCode+1))
-fi
+assertExitedWithAskpass
 
 echo ""
-echo " - Faulty URL"
+echo "When run with a faulty URL"
 export CRYPTTAB_KEY="$passphrase:https://not.a.real.address.example"
 runTest
-if [ $? -ne 42 ]; then
-  echo "   Wrong exit code"
-  cExitCode=$((cExitCode+1))
-fi
+assertExitedWithAskpass
 
 echo ""
-echo " - Faulty key file variable"
+echo "When run with an unparseable 'key file' field"
 export CRYPTTAB_KEY="not an acceptable key file"
 runTest
-if [ $? -ne 42 ]; then
-  echo "   Wrong exit code"
-  cExitCode=$((cExitCode+1))
-fi
+assertExitedWithAskpass
 
 echo ""
-echo " - CRYPTTAB_TRIED=1"
+echo "When run with CRYPTTAB_TRIED=1"
 export CRYPTTAB_KEY="$passphrase:$url"
 export CRYPTTAB_TRIED=1
 runTest
-if [ $? -ne 42 ]; then
-  echo "   Wrong exit code"
-  cExitCode=$((cExitCode+1))
-fi
+assertExitedWithAskpass
 
 exit "$cExitCode"
