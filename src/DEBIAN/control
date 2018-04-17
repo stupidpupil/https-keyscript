@@ -3,5 +3,5 @@ Version: 0.0.1
 Architecture: all
 Maintainer: Adam Watkins <adam.gc.watkins@gmail.com>
 Description: A keyscript and initramfs-tools helpers to allow a machine with a LUKS-encrypted boot drive to passwordlessly boot by fetching a remote key over HTTPS.
-Depends: cryptsetup (>= 2), wget (>= 1.17)
+Depends: cryptsetup (>= 2), wget (>= 1.15)
 Recommends: keyutils (>= 1.5)
