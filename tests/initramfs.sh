@@ -7,6 +7,9 @@ if [ -d "$INITRAMFS_ROOT" ]; then
   exit 1
 fi
 
+# This script builds an initramfs and then runs the keyscript.sh tests within it.
+# In this way, it tests that that initramfs *hooks* work as intended.
+
 workingDir="$(mkinitramfs -k -o "$INITRAMFS_ROOT-$(uname -r)" | cut -d " " -f 4 | cut -d "," -f 1)"
 echo "initramfs built"
 
