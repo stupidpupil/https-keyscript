@@ -1,0 +1,7 @@
+Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
+Name: https-keyscript
+Maintainer: Adam Watkins <adam.gc.watkins@gmail.com>
+Source: https://github.com/stupidpupil/https-keyscript
+
+Copyright: 2017-2018 Adam Watkins <adam.gc.watkins@gmail.com>
+License: GPL-3+

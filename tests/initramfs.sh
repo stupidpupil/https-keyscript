@@ -20,7 +20,7 @@ rm "$INITRAMFS_ROOT-$(uname -r)"
 cp "/bin/busybox" "$INITRAMFS_ROOT/bin/sha256sum"
 
 mkdir -p "$INITRAMFS_ROOT/lib/cryptsetup/scripts"
-cp "lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
+cp "src/lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
 
 cp -r "tests/" "$INITRAMFS_ROOT/tests/"
 

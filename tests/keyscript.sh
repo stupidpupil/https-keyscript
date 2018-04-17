@@ -10,9 +10,14 @@ export CRYPTTAB_NAME="TestDevice"
 export CRYPTTAB_TRIED=0
 export HTTPSKEYSCRIPT_TESTING=1
 
+keyscriptPath="src/lib/cryptsetup/scripts/wget_or_ask"
+if [ ! -f "$keyscriptPath" ]; then
+  keyscriptPath="/lib/cryptsetup/scripts/wget_or_ask"
+fi
+
 runTest()
 {
-  output="$(busybox sh lib/cryptsetup/scripts/wget_or_ask 2>/dev/null)"
+  output="$(busybox sh "$keyscriptPath" 2>/dev/null)"
   exitCode=$?
 
   if [ "$exitCode" -ne 0 ];then
@@ -36,6 +41,7 @@ cExitCode=0
 echo " - First-run test"
 runTest
 if [ $? -ne 0 ]; then
+  echo "   Wrong exit code"
   cExitCode=$((cExitCode+1))
 fi
 
@@ -43,6 +49,7 @@ echo ""
 echo " - Second-run test"
 runTest
 if [ $? -ne 0 ]; then
+  echo "   Wrong exit code"
   cExitCode=$((cExitCode+1))
 fi
 
@@ -51,6 +58,7 @@ echo " - Faulty passphrase"
 export CRYPTTAB_KEY="$passphrase/a:$url"
 runTest
 if [ $? -ne 42 ]; then
+  echo "   Wrong exit code"
   cExitCode=$((cExitCode+1))
 fi
 
@@ -59,6 +67,7 @@ echo " - Faulty URL"
 export CRYPTTAB_KEY="$passphrase:https://not.a.real.address.example"
 runTest
 if [ $? -ne 42 ]; then
+  echo "   Wrong exit code"
   cExitCode=$((cExitCode+1))
 fi
 
@@ -67,6 +76,7 @@ echo " - Faulty key file variable"
 export CRYPTTAB_KEY="not an acceptable key file"
 runTest
 if [ $? -ne 42 ]; then
+  echo "   Wrong exit code"
   cExitCode=$((cExitCode+1))
 fi
 
@@ -76,6 +86,7 @@ export CRYPTTAB_KEY="$passphrase:$url"
 export CRYPTTAB_TRIED=1
 runTest
 if [ $? -ne 42 ]; then
+  echo "   Wrong exit code"
   cExitCode=$((cExitCode+1))
 fi
 
