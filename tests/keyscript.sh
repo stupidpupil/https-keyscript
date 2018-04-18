@@ -18,7 +18,6 @@ if [ ! -f "$keyscriptPath" ]; then
 fi
 
 cExitCode=0
-output=""
 
 runTest ()
 {

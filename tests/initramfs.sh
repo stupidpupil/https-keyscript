@@ -25,8 +25,6 @@ mkinitramfs -c gzip -o "$INITRAMFS_ROOT/initramfs.gz"
 
 echo "initramfs built"
 
-# We don't actually want the image
-
 # By default, initramfs' busybox doesn't include sha256sum
 cp "/bin/busybox" "$INITRAMFS_ROOT/bin/sha256sum"
 
