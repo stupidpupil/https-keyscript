@@ -8,3 +8,4 @@ Priority: optional
 Section: admin
 Depends: cryptsetup (>= 2), wget (>= 1.15)
 Recommends: keyutils (>= 1.5)
+Installed-Size: 5
