@@ -31,6 +31,7 @@ mkdir -p "$INITRAMFS_ROOT/lib/cryptsetup/scripts"
 cp "src/lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
 
 cp -r "tests/" "$INITRAMFS_ROOT/tests/"
+mkdir "$INITRAMFS_ROOT/tmp"
 
 echo 'nameserver 84.200.69.80' > "$INITRAMFS_ROOT/etc/resolv.conf"
 
