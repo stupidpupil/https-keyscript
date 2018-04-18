@@ -76,7 +76,7 @@ assertExitedWithoutError ()
 assertExitedWithAskpass ()
 {
   printf "   should fallback to askpass "
-  if [ "$exitCode" -ne 42 ] || [ ! -z "$output" ];then
+  if [ "$exitCode" -ne 42 ] || [ ! -z "$stdout" ];then
     echo "❌"
     cExitCode=$((cExitCode+1))
     echoKeyscriptOutput
