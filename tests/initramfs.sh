@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# This script builds an initramfs and then runs the keyscript.sh tests within it.
+# In this way, it tests that that initramfs *hooks* work as intended,
+# and that the keyscript works in the reduced environment of the initramfs.
+
+# It tests the *installed* version of the hooks and
+# the development version of the keyscript.
+
 if ! (dpkg -s https-keyscript | grep "Status:.*installed" > /dev/null); then
   echo "https-keyscript is not installed"
   exit 1
@@ -12,17 +19,13 @@ if [ -d "$INITRAMFS_ROOT" ]; then
   exit 1
 fi
 
-# This script builds an initramfs and then runs the keyscript.sh tests within it.
-# In this way, it tests that that initramfs *hooks* work as intended.
+mkdir "$INITRAMFS_ROOT"
+mkinitramfs -c gzip -o "$INITRAMFS_ROOT/initramfs.gz"
+(cd "$INITRAMFS_ROOT"; zcat "initramfs.gz" | cpio -idmv 2>/dev/null)
 
-workingDir="$(mkinitramfs -k -o "$INITRAMFS_ROOT-$(uname -r)" | cut -d " " -f 4 | cut -d "," -f 1)"
 echo "initramfs built"
 
-cp -r "$workingDir" "$INITRAMFS_ROOT"
-rm -r /var/tmp/mkinitramfs*
-
 # We don't actually want the image
-rm "$INITRAMFS_ROOT-$(uname -r)" 
 
 # By default, initramfs' busybox doesn't include sha256sum
 cp "/bin/busybox" "$INITRAMFS_ROOT/bin/sha256sum"
