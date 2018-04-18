@@ -22,7 +22,7 @@ output=""
 
 runTest ()
 {
-  stdout="$(busybox sh "$keyscriptPath" 2>/dev/null)"
+  stdout="$(busybox sh "$keyscriptPath" 2> tmp/error.log)"
   exitCode=$?
 
   csum="$(echo "$stdout" | sha256sum | cut -d " " -f1)"
@@ -32,6 +32,17 @@ runTest ()
   fi
 }
 
+echoKeyscriptOutput ()
+{
+  echo ""
+  echo "Output:"
+  echo "$stdout"
+
+  echo "Error:"
+  cat tmp/error.log
+  echo ""
+}
+
 # Assertions
 assertChecksumIsCorrect ()
 {
@@ -39,9 +50,10 @@ assertChecksumIsCorrect ()
 
   if [ "$csum" != "$correctCsum" ]; then
     echo "❌"
-    echo "$output"
+    echo "$stdout"
 
     cExitCode=$((cExitCode+1))
+    echoKeyscriptOutput
     return 1
   fi
 
@@ -54,6 +66,7 @@ assertExitedWithoutError ()
   if [ "$exitCode" -ne 0 ];then
     echo "❌"
     cExitCode=$((cExitCode+1))
+    echoKeyscriptOutput
     return 1
   fi
 
@@ -66,6 +79,7 @@ assertExitedWithAskpass ()
   if [ "$exitCode" -ne 42 ] || [ ! -z "$output" ];then
     echo "❌"
     cExitCode=$((cExitCode+1))
+    echoKeyscriptOutput
     return 1
   fi
 
