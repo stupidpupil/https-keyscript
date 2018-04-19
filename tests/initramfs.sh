@@ -15,6 +15,9 @@ else
   fi
 fi
 
+#
+# Build the initramfs
+#
 
 INITRAMFS_ROOT="tmp/initramfs"
 
@@ -28,6 +31,10 @@ mkinitramfs -c gzip -o "$INITRAMFS_ROOT/initramfs.gz"
 (cd "$INITRAMFS_ROOT"; zcat "initramfs.gz" | cpio -idmv 2>/dev/null)
 
 echo "initramfs built"
+
+#
+# Run the initramfs hooks and install the keyscript, if necessary
+#
 
 if [ -z "$TEST_INSTALLED" ]; then
   DESTDIR="$(pwd)/$INITRAMFS_ROOT"
@@ -53,11 +60,13 @@ else
 
 fi
 
+#
+# Setup the initramfs environment for testing
+#
+
 # By default, initramfs' busybox doesn't include sha256sum
 cp "/bin/busybox" "$INITRAMFS_ROOT/bin/sha256sum"
 
-cp -r "tests/" "$INITRAMFS_ROOT/tests/"
-mkdir "$INITRAMFS_ROOT/tmp"
 
 echo 'nameserver 84.200.69.80' > "$INITRAMFS_ROOT/etc/resolv.conf"
 
@@ -66,10 +75,19 @@ if [ ! -d "$INITRAMFS_ROOT/dev/" ]; then
   mount -o bind /dev "$INITRAMFS_ROOT/dev/"
 fi
 
+
+cp -r "tests/" "$INITRAMFS_ROOT/tests/"
+mkdir "$INITRAMFS_ROOT/tmp"
+
+
 chroot "$INITRAMFS_ROOT" busybox sh "/tests/keyscript.sh"
 exitCode=$?
 
 sleep 1
+
+#
+# Remove the initramfs
+#
 
 umount "$INITRAMFS_ROOT/dev"
 
