@@ -4,13 +4,17 @@
 # In this way, it tests that that initramfs *hooks* work as intended,
 # and that the keyscript works in the reduced environment of the initramfs.
 
-# It tests the *installed* version of the hooks and
-# the development version of the keyscript.
-
-if ! (dpkg -s https-keyscript | grep "Status:.*installed" > /dev/null); then
-  echo "https-keyscript is not installed"
-  exit 1
+if [ -z "$TEST_INSTALLED" ]; then
+  if (dpkg -s https-keyscript | grep "Status:.*installed" > /dev/null); then
+    echo "Warning: https-keyscript is installed"
+  fi 
+else
+  if ! (dpkg -s https-keyscript | grep "Status:.*installed" > /dev/null); then
+    echo "https-keyscript is not installed"
+    exit 1
+  fi
 fi
+
 
 INITRAMFS_ROOT="tmp/initramfs"
 
@@ -25,11 +29,32 @@ mkinitramfs -c gzip -o "$INITRAMFS_ROOT/initramfs.gz"
 
 echo "initramfs built"
 
+if [ -z "$TEST_INSTALLED" ]; then
+  DESTDIR="$(pwd)/$INITRAMFS_ROOT"
+  export DESTDIR
+  for f in src/etc/initramfs-tools/hooks/*.sh
+  do
+    bash "$f"
+  done
+
+  echo "initramfs hooks run"
+
+  mkdir -p "$INITRAMFS_ROOT/lib/cryptsetup/scripts"
+  cp "src/lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
+
+  echo "keyscript copied"
+else
+
+  # If there's no reference to the keyscript in the crypttab it won't be installed in the initramfs
+  if ! [ -x "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask" ]; then
+    mkdir -p "$INITRAMFS_ROOT/lib/cryptsetup/scripts"
+    cp "/lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
+  fi
+
+fi
+
 # By default, initramfs' busybox doesn't include sha256sum
 cp "/bin/busybox" "$INITRAMFS_ROOT/bin/sha256sum"
-
-mkdir -p "$INITRAMFS_ROOT/lib/cryptsetup/scripts"
-cp "src/lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
 
 cp -r "tests/" "$INITRAMFS_ROOT/tests/"
 mkdir "$INITRAMFS_ROOT/tmp"
