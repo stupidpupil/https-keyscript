@@ -27,5 +27,6 @@ strace_and_copy_libs_for_url ()
 
 strace_and_copy_libs_for_url "https://www.debian.org"
 strace_and_copy_libs_for_url "https://raw.githubusercontent.com/stupidpupil/https-keyscript/master/tests/fixtures/encrypted_keyfile"
+strace_and_copy_libs_for_url "https://mozilla-modern.badssl.com"
 
 copy_exec /etc/ssl/certs/ca-certificates.crt
