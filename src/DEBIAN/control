@@ -1,5 +1,5 @@
 Package: https-keyscript
-Version: 0.0.1
+Version: 1.0.0
 Maintainer: Adam Watkins <adam.gc.watkins@gmail.com>
 Description: keyscript to fetch a remote key over HTTPS.
 Homepage: https://github.com/stupidpupil/https-keyscript
