@@ -23,7 +23,13 @@ rm unencrypted_keyfile
 ```
 
 2. Make `encrypted_keyfile` available somewhere on a webserver (e.g. `https://example.org/encrypted_keyfile`).
-3. Install `/lib/cryptsetup/scripts/wget_or_ask`.
+3. Install the keyscript and initramfs hooks.
+
+```
+wget https://github.com/stupidpupil/https-keyscript/releases/download/v1.0.0/https-keyscript_1.0.0_all.deb
+sudo dpkg -i https-keyscript_1.0.0_all.deb
+```
+
 4. Add keyfile to LUKS slots.
 
 ```
@@ -33,9 +39,8 @@ rm unencrypted_keyfile
 sudo chmod o-rx /lib/cryptsetup/scripts/wget_or_ask
 ```
 
-5. Install `/etc/initramfs-tools/…`
-6. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=wget_or_ask` and with a 'key file' field like `somepassphrase:https://example.org/encrypted_keyfile`. 
-7. `sudo update-initramfs -u`
+5. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=wget_or_ask` and with a 'key file' field like `somepassphrase:https://example.org/encrypted_keyfile`. 
+6. `sudo update-initramfs -u`
 
 ## Caching
 
