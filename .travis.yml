@@ -2,12 +2,22 @@ sudo: required
 dist: trusty
 language: bash
 before_install:
-  - 'sudo apt-get update -qq'
-  - 'sudo apt-get install -qq keyutils shellcheck initramfs-tools fakeroot'
-  - 'fakeroot /bin/sh build-deb.sh'
+- sudo apt-get update -qq
+- sudo apt-get install -qq keyutils shellcheck initramfs-tools fakeroot
+- fakeroot /bin/sh build-deb.sh
 script:
-  - 'bash tests/keyscript.sh'
-  - 'sudo bash tests/initramfs.sh'
-  - 'sudo dpkg -i dist/*.deb'
-  - 'sudo TEST_INSTALLED=y bash tests/initramfs.sh'  
-  - 'bash tests/shellcheck.sh'
+- bash tests/keyscript.sh
+- sudo bash tests/initramfs.sh
+- sudo dpkg -i dist/*.deb
+- sudo TEST_INSTALLED=y bash tests/initramfs.sh
+- bash tests/shellcheck.sh
+deploy:
+  provider: releases
+  file_glob: true
+  file: dist/*.deb
+  skip_cleanup: true
+  api-key:
+    secure: ylG4TPo6QNi/VhNpYft8EkmJ1+tZhbmlPowVn7hlLngJZyp52W4sDbmd34X/BReWMKCjs98o16bXZEhk6kILditvcFQIFpXvuaaPSuU8fhrbp4jSxH6oVANNAZ396Ttg8xxA2WgmNS4hiqt3YOhMn0n7L08EB5LMCcEbFJbUfkAlByeGY9mlnPBvN6+LRA1wiIN9cbOBZdWHMZeKCn6JLfRsMQIodaEGJ0hVIjyG7CgLO3kwmtBuzhzLNRuz0PIID9+oGcHFX1gX2V7fcLKJQBBcgO8jT8srJdm7ox3iik6kWoVac2dB6Rrs3QzSHfR9+nkE1WuxGdgBJUkaWjDO4brK7GCOYzjBtqUdGQ6XWQDVbDOd6o6FVcTuDAXMLcf0JP0GgVTb/tv8VhOwNt47zX/pe/ZuKFCGvvXABVc1RsSmkV6BFUxFFkIR40RDSpMu0Gp+FbGe/24VNlPcwJzO3PMgsx7bQ9fTqDRc6MEubZfFW6TB0KpgBRQt3uACw+2BI0GzlkOpC9yAAw9NcPbsbQ3ucc428zQdLTnDTqvE0/MJVbEzn7ZJKVU/zqj777rJ+RbAczb25T9Wk5yjRS2DzMXgoXItMzsMHC0p02WV1jcc2HiTx+fG1pQTmahhLzMv/f7CCaioKdyKizZGvcYhkf/Yo4rIAHkvsbnwQo6+2j0=
+  on:
+    repo: stupidpupil/https-keyscript
+    tags: true
