@@ -23,9 +23,8 @@ wait_for_udev 10
 ipconfig -t 30 -c dhcp -d eth0
 
 
-touch /etc/resolv.conf
 # Cloudflare
-echo 'nameserver 1.1.1.1' >> /etc/resolv.conf
+echo 'nameserver 1.1.1.1' > /etc/resolv.conf
 echo 'nameserver 1.0.0.1' >> /etc/resolv.conf
 
 # Quad 9
