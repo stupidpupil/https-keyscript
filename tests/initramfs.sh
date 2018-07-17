@@ -68,7 +68,13 @@ fi
 cp "/bin/busybox" "$INITRAMFS_ROOT/bin/sha256sum"
 
 
-echo 'nameserver 84.200.69.80' > "$INITRAMFS_ROOT/etc/resolv.conf"
+# Cloudflare
+echo 'nameserver 1.1.1.1' > "$INITRAMFS_ROOT/etc/resolv.conf"
+echo 'nameserver 1.0.0.1' >> "$INITRAMFS_ROOT/etc/resolv.conf"
+
+# Quad 9
+echo 'nameserver 9.9.9.9' >> "$INITRAMFS_ROOT/etc/resolv.conf"
+echo 'nameserver 9.9.9.10' >> "$INITRAMFS_ROOT/etc/resolv.conf"
 
 if [ ! -d "$INITRAMFS_ROOT/dev/" ]; then
   mkdir "$INITRAMFS_ROOT/dev/"
