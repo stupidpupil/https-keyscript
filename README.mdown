@@ -26,8 +26,8 @@ rm unencrypted_keyfile
 3. Install the keyscript and initramfs hooks.
 
 ```
-wget https://github.com/stupidpupil/https-keyscript/releases/download/v1.0.0/https-keyscript_1.0.0_all.deb
-sudo dpkg -i https-keyscript_1.0.0_all.deb
+wget https://github.com/stupidpupil/https-keyscript/releases/download/v1.0.1/https-keyscript_1.0.1_all.deb
+sudo dpkg -i https-keyscript_1.0.1_all.deb
 ```
 
 4. Add keyfile to LUKS slots.
