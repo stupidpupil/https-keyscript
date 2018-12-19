@@ -5,4 +5,7 @@ case $1 in
 esac
 . /usr/share/initramfs-tools/hook-functions
 
-copy_exec /bin/keyctl
+if [ -x /bin/keyctl ]
+then
+        copy_exec /bin/keyctl
+fi
