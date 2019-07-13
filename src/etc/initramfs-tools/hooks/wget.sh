@@ -5,7 +5,7 @@ case $1 in
 esac
 . /usr/share/initramfs-tools/hook-functions
 
-copy_exec /usr/bin/wget
+copy_exec /usr/bin/wget /usr/bin/real_wget
 
 strace_and_copy_libs_for_url ()
 {
