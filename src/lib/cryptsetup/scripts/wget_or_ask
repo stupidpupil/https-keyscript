@@ -36,6 +36,8 @@ fi
 
 if [ -x /usr/bin/real_wget ]; then
   wget_path="/usr/bin/real_wget"
+elif [ -x /usr/bin/wget ]; then
+  wget_path="/usr/bin/wget"
 else
   wget_path="wget"
 fi
