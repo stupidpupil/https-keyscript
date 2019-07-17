@@ -53,6 +53,8 @@ The keyscript uses the [kernel keyring](http://man7.org/linux/man-pages/man7/key
 
 [netkeyscript](https://github.com/basak/netkeyscript) uses link-local IPv6 UDP packets with an unencrypted passphrase.
 
+[clevis](https://github.com/latchset/clevis#unlocker-dracut) provides a *dracut*-based unlocker for use with the [tang](https://github.com/latchset/tang) keyserver.
+
 There are a number of variations on using *dropbear* or similar to allow remote, but not unattended, restarts with an encrypted boot.
 
 ## License
