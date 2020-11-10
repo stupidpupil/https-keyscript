@@ -152,7 +152,7 @@ https_try_fetch ()
   encrypted_keyfile=$($wget_path --secure-protocol=PFS -q -O - "$url")
 
   if [ $? -eq 0 ]; then
-    decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -md sha256 -d -salt -k "$openssl_passphrase")
+    decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -md sha256 -d -salt -pbkdf2 -k "$openssl_passphrase")
     if [ $? -eq 0 ]; then
       keyctl_store
       printf '%s\n' "$decrypted_keyfile"

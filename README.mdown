@@ -18,7 +18,7 @@ It is intended to protect against information disclosure in the event of acciden
 
 ```
 dd if=/dev/random bs=1c count=256 | base64 > unencrypted_keyfile
-cat unencrypted_keyfile | openssl enc -base64 -aes-256-cbc -md sha256 -e -salt -out encrypted_keyfile -k somepassphrase
+cat unencrypted_keyfile | openssl enc -base64 -aes-256-cbc -md sha256 -e -salt -pbkdf2 -out encrypted_keyfile -k somepassphrase
 rm unencrypted_keyfile
 ```
 
