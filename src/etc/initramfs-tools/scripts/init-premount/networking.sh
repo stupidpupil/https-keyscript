@@ -1,32 +1,49 @@
 #!/bin/sh
-set -e
 
-PREREQ=""
+PREREQ="udev"
 
-prereqs()
-{
+prereqs() {
     echo "$PREREQ"
 }
 
-case $1 in
+case "$1" in
     prereqs)
         prereqs
         exit 0
-        ;;
+    ;;
 esac
 
 . /scripts/functions
 
-# The more sensible approach might be use the configure_networking function
-# but I struggled to make this work well independently of configuring NFS
-wait_for_udev 10
-ipconfig -t 30 -c dhcp -d eth0
+# Network is manually configured.
+[ "$IP" != off ] && [ "$IP" != none ] || exit 0
 
+# Always run configure_networking() before fetching the key; on NFS 
+# mounts this has been already done
+[ "$BOOT" != nfs ] && configure_networking
 
-# Cloudflare
-echo 'nameserver 1.1.1.1' > /etc/resolv.conf
-echo 'nameserver 1.0.0.1' >> /etc/resolv.conf
+# Waiting a moment to get a valid network connection before 
+# configuring resolv.conf
+connection_wait=30
+seconds=0
+while [ $seconds -le $connection_wait ]; do
+    if [ "$(/sbin/ip addr | grep -c inet )" -ne 0 ]; then
+        break
+    fi
+    if [ $seconds -ge $connection_wait ]; then
+        log_failure_msg "No working networking connection found in $connection_wait seconds"
+    fi
+    sleep 1
+    seconds=$(( seconds + 1))
+done
 
-# Quad 9
-echo 'nameserver 9.9.9.9' >> /etc/resolv.conf
-echo 'nameserver 9.9.9.10' >> /etc/resolv.conf
+# Configure a basic resolv.conf just to get domain name resolving 
+# working.
+if ! [ -s /etc/resolv.conf ]; then
+    # Cloudflare
+    [ -z "$IPV4DNS0" ] && IPV4DNS0="1.1.1.1"
+    # Quad9
+    [ -z "$IPV4DNS1" ] && IPV4DNS1="9.9.9.9"
+    echo "nameserver $IPV4DNS0" > /etc/resolv.conf
+    echo "nameserver $IPV4DNS1" >> /etc/resolv.conf
+fi
