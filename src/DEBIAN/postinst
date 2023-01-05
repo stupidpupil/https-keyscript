@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = 'configure' ]; then
+     update-initramfs -u
+fi
+
+exit 0
