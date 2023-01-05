@@ -6,6 +6,6 @@ Homepage: https://github.com/stupidpupil/https-keyscript
 Architecture: all
 Priority: optional
 Section: admin
-Depends: cryptsetup (>= 2), wget (>= 1.15)
+Depends: cryptsetup (>= 2), busybox (>= 1.30)
 Recommends: keyutils (>= 1.5)
 Installed-Size: 5
