@@ -12,9 +12,9 @@ export HTTPSKEYSCRIPT_TESTING=1
 
 # Run the test against the src version of the keyscript if its available
 # or else against the installed version (which is useful for the initramfs test)
-keyscriptPath="src/lib/cryptsetup/scripts/wget_or_ask"
+keyscriptPath="src/lib/cryptsetup/scripts/fetch_or_ask"
 if [ ! -f "$keyscriptPath" ]; then
-  keyscriptPath="/lib/cryptsetup/scripts/wget_or_ask"
+  keyscriptPath="/lib/cryptsetup/scripts/fetch_or_ask"
 fi
 
 cExitCode=0

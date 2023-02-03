@@ -26,19 +26,19 @@ rm unencrypted_keyfile
 3. Install the keyscript and initramfs hooks.
 
 ```
-wget https://github.com/stupidpupil/https-keyscript/releases/download/v1.0.1/https-keyscript_1.0.3_all.deb
+curl https://github.com/stupidpupil/https-keyscript/releases/download/v1.0.1/https-keyscript_1.0.3_all.deb
 sudo dpkg -i https-keyscript_1.0.3_all.deb
 ```
 
 4. Add keyfile to LUKS slots.
 
 ```
-busybox sh /lib/cryptsetup/scripts/wget_or_ask "somepassphrase:https://example.org/encrypted_keyfile" > unencrypted_keyfile
+busybox sh /lib/cryptsetup/scripts/fetch_or_ask "somepassphrase:https://example.org/encrypted_keyfile" > unencrypted_keyfile
 sudo cryptsetup luksAddKey /dev/someDevice unencrypted_keyfile
 rm unencrypted_keyfile
 ```
 
-5. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=wget_or_ask` and with a 'key file' field like `somepassphrase:https://example.org/encrypted_keyfile`. 
+5. Update the `/dev/someDevice` entry in `/etc/crypttab` with the option `keyscript=fetch_or_ask` and with a 'key file' field like `somepassphrase:https://example.org/encrypted_keyfile`. 
 6. `sudo update-initramfs -u`
 
 (You might also need to add the `initramfs` option to the `crypttab` in step 5 due to _systemd_'s [lack of support for keyscripts](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=618862); see the [crypttab man page](http://manpages.ubuntu.com/manpages/cosmic/man5/crypttab.5.html).)

@@ -34,14 +34,6 @@ if  [ -z "$url" ] || [ -z "$openssl_passphrase" ]; then
   use_https=0
 fi
 
-if [ -x /usr/bin/real_wget ]; then
-  wget_path="/usr/bin/real_wget"
-elif [ -x /usr/bin/wget ]; then
-  wget_path="/usr/bin/wget"
-else
-  wget_path="wget"
-fi
-
 #
 # Plymouth helper functions
 #
@@ -149,7 +141,7 @@ https_try_fetch ()
 
   message "Fetching remote keyfile for $CRYPTTAB_NAME..."
 
-  encrypted_keyfile=$($wget_path --secure-protocol=PFS -q -O - "$url")
+  encrypted_keyfile=$(curl -s "$url")
 
   if [ $? -eq 0 ]; then
     decrypted_keyfile=$(echo "$encrypted_keyfile" | openssl enc -base64 -aes-256-cbc -md sha256 -d -salt -k "$openssl_passphrase")
