@@ -47,15 +47,15 @@ if [ -z "$TEST_INSTALLED" ]; then
   echo "initramfs hooks run"
 
   mkdir -p "$INITRAMFS_ROOT/lib/cryptsetup/scripts"
-  cp "src/lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
+  cp "src/lib/cryptsetup/scripts/fetch_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/fetch_or_ask"
 
   echo "keyscript copied"
 else
 
   # If there's no reference to the keyscript in the crypttab it won't be installed in the initramfs
-  if ! [ -x "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask" ]; then
+  if ! [ -x "$INITRAMFS_ROOT/lib/cryptsetup/scripts/fetch_or_ask" ]; then
     mkdir -p "$INITRAMFS_ROOT/lib/cryptsetup/scripts"
-    cp "/lib/cryptsetup/scripts/wget_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/wget_or_ask"
+    cp "/lib/cryptsetup/scripts/fetch_or_ask" "$INITRAMFS_ROOT/lib/cryptsetup/scripts/fetch_or_ask"
   fi
 
 fi
